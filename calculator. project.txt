@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probability Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #00d9ff 0%, #0099ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #a0a0a0;
+            font-weight: 300;
+        }
+
+        .selector-group {
+            margin-bottom: 25px;
+        }
+
+        .label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #00d9ff;
+            margin-bottom: 10px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        select:hover, input:hover {
+            border-color: rgba(0, 217, 255, 0.6);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #00d9ff;
+            background: rgba(0, 217, 255, 0.05);
+            box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+        }
+
+        .inputs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .inputs-grid.full {
+            grid-template-columns: 1fr;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #a0a0a0;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00d9ff 0%, #0099ff 100%);
+            border: none;
+            border-radius: 8px;
+            color: #0f1419;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 217, 255, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .result-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #00d9ff;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: 300;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 8px;
+            word-break: break-all;
+        }
+
+        .result-description {
+            font-size: 12px;
+            color: #a0a0a0;
+            line-height: 1.4;
+        }
+
+        .info-box {
+            background: rgba(0, 217, 255, 0.08);
+            border-left: 3px solid #00d9ff;
+            padding: 12px 14px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #b0b0b0;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .result-value {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Probability Calculator</h1>
+            <p>Solve statistical problems instantly</p>
+        </div>
+
+        <div class="selector-group">
+            <label class="label" for="calculator-type">Select Calculation</label>
+            <select id="calculator-type">
+                <option value="basic">Basic Probability</option>
+                <option value="combinations">Combinations (nCr)</option>
+                <option value="permutations">Permutations (nPr)</option>
+                <option value="binomial">Binomial Probability</option>
+                <option value="normal">Normal Distribution (Z-Score)</option>
+                <option value="expected">Expected Value</option>
+            </select>
+        </div>
+
+        <!-- Basic Probability -->
+        <div id="basic-inputs" class="calculation-inputs">
+            <div class="info-box">P(A) = Favorable Outcomes / Total Outcomes</div>
+            <div class="inputs-grid full">
+                <div class="input-group">
+                    <label>Favorable Outcomes</label>
+                    <input type="number" id="favorable" placeholder="e.g., 3" min="0">
+                </div>
+                <div class="input-group">
+                    <label>Total Outcomes</label>
+                    <input type="number" id="total" placeholder="e.g., 6" min="1">
+                </div>
+            </div>
+        </div>
+
+        <!-- Combinations -->
+        <div id="combinations-inputs" class="calculation-inputs hidden">
+            <div class="info-box">C(n,r) = n! / (r! × (n-r)!)</div>
+            <div class="inputs-grid full">
+                <div class="input-group">
+                    <label>Total Items (n)</label>
+                    <input type="number" id="comb-n" placeholder="e.g., 5" min="0">
+                </div>
+                <div class="input-group">
+                    <label>Items to Choose (r)</label>
+                    <input type="number" id="comb-r" placeholder="e.g., 3" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Permutations -->
+        <div id="permutations-inputs" class="calculation-inputs hidden">
+            <div class="info-box">P(n,r) = n! / (n-r)!</div>
+            <div class="inputs-grid full">
+                <div class="input-group">
+                    <label>Total Items (n)</label>
+                    <input type="number" id="perm-n" placeholder="e.g., 5" min="0">
+                </div>
+                <div class="input-group">
+                    <label>Items to Arrange (r)</label>
+                    <input type="number" id="perm-r" placeholder="e.g., 3" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Binomial Probability -->
+        <div id="binomial-inputs" class="calculation-inputs hidden">
+            <div class="info-box">P(X=k) = C(n,k) × p^k × (1-p)^(n-k)</div>
+            <div class="inputs-grid full">
+                <div class="input-group">
+                    <label>Number of Trials (n)</label>
+                    <input type="number" id="bin-n" placeholder="e.g., 10" min="1">
+                </div>
+                <div class="input-group">
+                    <label>Probability of Success (p)</label>
+                    <input type="number" id="bin-p" placeholder="e.g., 0.5" min="0" max="1" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Number of Successes (k)</label>
+                    <input type="number" id="bin-k" placeholder="e.g., 5" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Normal Distribution -->
+        <div id="normal-inputs" class="calculation-inputs hidden">
+            <div class="info-box">Z = (X - μ) / σ</div>
+            <div class="inputs-grid full">
+                <div class="input-group">
+                    <label>Value (X)</label>
+                    <input type="number" id="norm-x" placeholder="e.g., 85" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Mean (μ)</label>
+                    <input type="number" id="norm-mean" placeholder="e.g., 80" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Standard Deviation (σ)</label>
+                    <input type="number" id="norm-sd" placeholder="e.g., 5" min="0.01" step="0.01">
+                </div>
+            </div>
+        </div>
+
+        <!-- Expected Value -->
+        <div id="expected-inputs" class="calculation-inputs hidden">
+            <div class="info-box">E(X) = Σ(x × P(x))</div>
+            <div class="inputs-grid full">
+                <div class="input-group">
+                    <label>Outcomes (comma-separated)</label>
+                    <input type="text" id="exp-outcomes" placeholder="e.g., 1,2,3,4,5,6">
+                </div>
+                <div class="input-group">
+                    <label>Probabilities (comma-separated)</label>
+                    <input type="text" id="exp-probs" placeholder="e.g., 0.167,0.167,0.167,0.167,0.167,0.167">
+                </div>
+            </div>
+        </div>
+
+        <button class="calculate-btn" onclick="calculate()">Calculate</button>
+
+        <div class="result-section">
+            <div class="result-label" id="result-label">Result</div>
+            <div class="result-value" id="result-value">—</div>
+            <div class="result-description" id="result-description"></div>
+        </div>
+    </div>
+
+    <script>
+        const calculatorType = document.getElementById('calculator-type');
+        const calculationInputs = document.querySelectorAll('.calculation-inputs');
+
+        // Utility functions
+        function factorial(n) {
+            if (n < 0) return null;
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+
+        function combinations(n, r) {
+            if (r > n || r < 0 || n < 0) return null;
+            return factorial(n) / (factorial(r) * factorial(n - r));
+        }
+
+        function permutations(n, r) {
+            if (r > n || r < 0 || n < 0) return null;
+            return factorial(n) / factorial(n - r);
+        }
+
+        function normalCDF(z) {
+            const a1 = 0.254829592;
+            const a2 = -0.284496736;
+            const a3 = 1.421413741;
+            const a4 = -1.453152027;
+            const a5 = 1.061405429;
+            const p = 0.3275911;
+
+            const sign = z < 0 ? -1 : 1;
+            z = Math.abs(z) / Math.sqrt(2);
+
+            const t = 1 / (1 + p * z);
+            const t2 = t * t;
+            const t3 = t2 * t;
+            const t4 = t3 * t;
+            const t5 = t4 * t;
+
+            const y = 1 - (((((a5 * t5 + a4 * t4) + a3 * t3) + a2 * t2) + a1 * t) * t) * Math.exp(-z * z);
+
+            return 0.5 * (1 + sign * y);
+        }
+
+        // Switch between input groups
+        calculatorType.addEventListener('change', (e) => {
+            calculationInputs.forEach(input => input.classList.add('hidden'));
+            const selectedId = e.target.value + '-inputs';
+            document.getElementById(selectedId).classList.remove('hidden');
+            document.getElementById('result-value').textContent = '—';
+            document.getElementById('result-description').textContent = '';
+        });
+
+        // Main calculation function
+        function calculate() {
+            const type = calculatorType.value;
+            const resultValue = document.getElementById('result-value');
+            const resultLabel = document.getElementById('result-label');
+            const resultDescription = document.getElementById('result-description');
+
+            let result = null;
+            let label = '';
+            let description = '';
+
+            try {
+                switch (type) {
+                    case 'basic':
+                        const favorable = parseFloat(document.getElementById('favorable').value);
+                        const total = parseFloat(document.getElementById('total').value);
+                        if (favorable < 0 || total <= 0) throw new Error('Invalid inputs');
+                        result = (favorable / total).toFixed(4);
+                        label = 'Probability P(A)';
+                        description = `${favorable} favorable outcome(s) out of ${total} total outcome(s)`;
+                        break;
+
+                    case 'combinations':
+                        const comb_n = parseInt(document.getElementById('comb-n').value);
+                        const comb_r = parseInt(document.getElementById('comb-r').value);
+                        result = combinations(comb_n, comb_r);
+                        if (result === null) throw new Error('Invalid combination: r must be ≤ n');
+                        result = Math.round(result);
+                        label = `C(${comb_n},${comb_r})`;
+                        description = `${result} ways to choose ${comb_r} items from ${comb_n}`;
+                        break;
+
+                    case 'permutations':
+                        const perm_n = parseInt(document.getElementById('perm-n').value);
+                        const perm_r = parseInt(document.getElementById('perm-r').value);
+                        result = permutations(perm_n, perm_r);
+                        if (result === null) throw new Error('Invalid permutation: r must be ≤ n');
+                        result = Math.round(result);
+                        label = `P(${perm_n},${perm_r})`;
+                        description = `${result} ways to arrange ${perm_r} items from ${perm_n}`;
+                        break;
+
+                    case 'binomial':
+                        const bin_n = parseInt(document.getElementById('bin-n').value);
+                        const bin_p = parseFloat(document.getElementById('bin-p').value);
+                        const bin_k = parseInt(document.getElementById('bin-k').value);
+                        if (bin_p < 0 || bin_p > 1 || bin_k > bin_n) throw new Error('Invalid inputs');
+                        const comb = combinations(bin_n, bin_k);
+                        result = (comb * Math.pow(bin_p, bin_k) * Math.pow(1 - bin_p, bin_n - bin_k)).toFixed(6);
+                        label = `P(X=${bin_k})`;
+                        description = `Probability of exactly ${bin_k} successes in ${bin_n} trials (p=${bin_p})`;
+                        break;
+
+                    case 'normal':
+                        const norm_x = parseFloat(document.getElementById('norm-x').value);
+                        const norm_mean = parseFloat(document.getElementById('norm-mean').value);
+                        const norm_sd = parseFloat(document.getElementById('norm-sd').value);
+                        const z = ((norm_x - norm_mean) / norm_sd).toFixed(4);
+                        const cdf = normalCDF(z).toFixed(4);
+                        result = z;
+                        label = 'Z-Score';
+                        description = `Z = ${z}, P(Z ≤ ${z}) = ${cdf}`;
+                        break;
+
+                    case 'expected':
+                        const outcomes = document.getElementById('exp-outcomes').value.split(',').map(x => parseFloat(x.trim()));
+                        const probs = document.getElementById('exp-probs').value.split(',').map(x => parseFloat(x.trim()));
+                        if (outcomes.length !== probs.length) throw new Error('Outcomes and probabilities must have same length');
+                        if (Math.abs(probs.reduce((a, b) => a + b, 0) - 1) > 0.01) throw new Error('Probabilities must sum to 1');
+                        result = outcomes.reduce((sum, outcome, i) => sum + outcome * probs[i], 0).toFixed(4);
+                        label = 'Expected Value E(X)';
+                        description = `Mean of the distribution`;
+                        break;
+                }
+
+                resultValue.textContent = result;
+                resultLabel.textContent = label;
+                resultDescription.textContent = description;
+            } catch (error) {
+                resultValue.textContent = 'Error';
+                resultLabel.textContent = 'Invalid Input';
+                resultDescription.textContent = error.message;
+            }
+        }
+
+        // Allow Enter key to calculate
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') calculate();
+        });
+    </script>
+</body>
+</html>
